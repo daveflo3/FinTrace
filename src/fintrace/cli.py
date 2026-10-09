@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import typer
 from rich.console import Console
 from rich.table import Table
 
 from .domain import Confidence, Node, NodeKind
+from .excel import ExcelIngestor
 from .graph import LineageGraph
 
 app = typer.Typer(help="FinTrace — traceable financial judgement.")
@@ -86,6 +89,38 @@ def demo() -> None:
         table.add_row(node.kind.value, node.label, value)
 
     console.print(table)
+
+
+@app.command("inspect-excel")
+def inspect_excel(
+    workbook: Path = typer.Argument(..., exists=True, readable=True, help="Path to an .xlsx/.xlsm model."),
+    json_out: Path | None = typer.Option(None, "--json-out", help="Optional JSON snapshot output path."),
+) -> None:
+    """Map workbook structure, formula dependencies and review candidates."""
+    snapshot = ExcelIngestor().inspect(workbook)
+
+    console.print(f"[bold]{snapshot.workbook_name}[/bold]")
+    console.print(
+        f"{len(snapshot.sheets)} sheet(s) · {len(snapshot.cells)} non-empty cell(s) · "
+        f"{len(snapshot.dependencies)} dependency edge(s)"
+    )
+
+    table = Table(title="Review candidates")
+    table.add_column("Role")
+    table.add_column("Cell")
+    table.add_column("Score", justify="right")
+    table.add_column("Why")
+    for candidate in snapshot.candidates[:20]:
+        table.add_row(
+            candidate.role, candidate.ref, f"{candidate.score:.2f}", "; ".join(candidate.reasons)
+        )
+    console.print(table)
+
+    if snapshot.warnings:
+        console.print(f"[yellow]{len(snapshot.warnings)} parser warning(s).[/yellow]")
+    if json_out is not None:
+        snapshot.save_json(json_out)
+        console.print(f"Snapshot written to {json_out}")
 
 
 if __name__ == "__main__":
