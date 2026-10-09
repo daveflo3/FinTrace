@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fintrace"
-version = "0.2.0"
+version = "0.3.0"
 description = "A financial decision-intelligence layer for traceable analyst judgement."
 readme = "README.md"
 requires-python = ">=3.11"

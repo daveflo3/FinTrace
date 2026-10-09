@@ -44,25 +44,27 @@ FinTrace aims to make those questions answerable.
 - Analyst memory
 - Narrative-vs-numbers review
 
-## Current milestone — Evidence + assumption register (working)
+## Current milestone — Excel model ingestion (working)
 
 The current build can:
 
 - create dated, attributed evidence records;
-- register an analyst assumption with rationale, confidence and supporting evidence;
-- revise an assumption **without deleting its previous reasoning**;
-- audit missing support and potentially stale evidence (prompts for review, not conclusions);
-- turn the current assumption register into a traceable dependency graph;
-- save and reload the register as validated JSON;
-- run a clearly synthetic end-to-end example.
+- register and revise assumptions without deleting earlier reasoning;
+- inspect `.xlsx`/`.xlsm` models while leaving Excel as the analyst-owned model;
+- preserve exact sheet/cell references, formulas, formats, labels and named ranges;
+- map formula dependencies across sheets and workbook-defined names;
+- surface **review candidates** for assumptions and material outputs using transparent heuristics;
+- export a deterministic workbook snapshot to JSON;
+- warn rather than guess when a formula reference cannot be safely resolved.
 
 ### Quickstart
 
 Python 3.11+ required. From the repository root:
 
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,excel]"
 fintrace demo
+fintrace inspect-excel path/to/model.xlsx --json-out outputs/model_map.json
 python examples/register_demo.py
 python -m pytest -q
 ```
@@ -102,11 +104,13 @@ src/fintrace/
 ├── domain.py          # Core financial reasoning entities
 ├── graph.py           # Evidence / assumption lineage graph
 ├── register.py        # Provenance, revisions and JSON storage
+├── excel.py           # Workbook structure + formula lineage ingestion
 └── cli.py             # Small CLI for exercising the core
 
 tests/
 ├── test_graph.py
-└── test_register.py
+├── test_register.py
+└── test_excel.py
 
 docs/
 ├── architecture.md
@@ -118,7 +122,7 @@ examples/
 
 ## Status
 
-Early build. Core lineage and an auditable assumption register are implemented. Excel integration, model attribution, backtesting and the UI remain planned. The project currently has 12 automated tests.
+Early build. Core lineage, an auditable assumption register and the first Excel-ingestion layer are implemented. Model attribution, backtesting and the UI remain planned.
 
 ## Why this project exists
 
