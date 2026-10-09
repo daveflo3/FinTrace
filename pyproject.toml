@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fintrace"
+version = "0.2.0"
+description = "A financial decision-intelligence layer for traceable analyst judgement."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  {name = "David Pimenta"}
+]
+dependencies = [
+  "networkx>=3.3",
+  "pydantic>=2.8",
+  "typer>=0.12",
+  "rich>=13.7"
+]
+
+[project.optional-dependencies]
+excel = [
+  "openpyxl>=3.1",
+  "pandas>=2.2",
+  "numpy>=2.0"
+]
+dev = [
+  "pytest>=8.2",
+  "ruff>=0.5"
+]
+
+[project.scripts]
+fintrace = "fintrace.cli:app"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
