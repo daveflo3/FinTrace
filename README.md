@@ -1,5 +1,7 @@
 # FinTrace
 
+[![tests](https://github.com/daveflo3/FinTrace/actions/workflows/tests.yml/badge.svg)](https://github.com/daveflo3/FinTrace/actions/workflows/tests.yml)
+
 **FinTrace is a financial decision-intelligence layer that assists analysts rather than replacing them.**
 
 The core idea is simple: a financial model should not just produce an answer. It should make the chain from **evidence → assumptions → calculations → outputs → judgement** inspectable.
@@ -29,22 +31,30 @@ FinTrace aims to make those questions answerable.
 5. **No black-box recommendations.** FinTrace should not output "buy", "sell" or an unexplained forecast.
 6. **Version everything that matters.** Assumptions, evidence, model versions and analyst rationale should have history.
 
-## Planned capabilities
+## Capability map
 
-- Assumption lineage
-- Evidence graph
-- Excel model ingestion
-- Model-version comparison
-- Valuation-change attribution
-- Fact / assumption / calculation / judgement classification
-- Thesis fragility analysis
-- Monte Carlo scenario analysis
-- Historical forecast backtesting
-- Analyst bias tracking
-- Analyst memory
-- Narrative-vs-numbers review
+- [x] Assumption lineage
+- [x] Evidence graph primitives
+- [x] Excel model ingestion
+- [x] Model-version comparison
+- [x] Changed-cell → downstream-output impact tracing
+- [ ] Numerical valuation-change attribution
+- [ ] Thesis fragility analysis
+- [ ] Monte Carlo scenario analysis
+- [ ] Historical forecast backtesting
+- [ ] Analyst bias tracking and analyst memory
+- [ ] Narrative-vs-numbers review
 
-## Current milestone — Excel model ingestion (working)
+## Milestones
+
+| Version | Milestone | Status |
+| --- | --- | --- |
+| `v0.2.0` | Evidence + assumption lineage | ✅ Complete |
+| `v0.3.0` | Excel model ingestion | ✅ Complete |
+| `v0.4.0` | Model version intelligence MVP | ✅ Complete |
+| `v0.5.0` | Valuation-change attribution | Planned |
+
+## Latest milestone — Model version intelligence
 
 The current build can:
 
@@ -55,7 +65,9 @@ The current build can:
 - map formula dependencies across sheets and workbook-defined names;
 - surface **review candidates** for assumptions and material outputs using transparent heuristics;
 - export a deterministic workbook snapshot to JSON;
-- warn rather than guess when a formula reference cannot be safely resolved.
+- warn rather than guess when a formula reference cannot be safely resolved;
+- compare two workbook versions and classify value, formula and structural changes;
+- trace changed cells to downstream material-output candidates.
 
 ### Quickstart
 
@@ -65,11 +77,27 @@ Python 3.11+ required. From the repository root:
 python -m pip install -e ".[dev,excel]"
 fintrace demo
 fintrace inspect-excel path/to/model.xlsx --json-out outputs/model_map.json
+fintrace compare-excel old_model.xlsx new_model.xlsx --json-out outputs/model_changes.json
 python examples/register_demo.py
 python -m pytest -q
 ```
 
 The example creates `outputs/assumption_register_demo.json` (ignored by Git). Its numbers are illustrative, not real financial data.
+
+### Version-comparison demo
+
+```bash
+python examples/model_version_demo.py
+```
+
+Example output:
+
+```text
+'Inputs'!B2: 0.08 -> 0.06 [candidate_assumption_change]
+  impacts: 'Model'!B1, 'Model'!B2
+```
+
+This is deliberately not an investment recommendation. It shows that a changed analyst-input candidate can be traced through the model to downstream outputs.
 
 ### Example of the central idea
 
@@ -83,7 +111,7 @@ FY27 revenue growth = 6.5% (analyst assumption)
 Revenue / FCF / DCF valuation (future workbook integration)
 ```
 
-The code currently supports the first link and the core lineage primitives. It **does not yet** analyse real Excel models or calculate valuations.
+The code now supports evidence/assumption lineage, Excel model inspection and lineage-aware model comparison. It **does not yet** numerically attribute valuation movement to individual changed drivers or calculate valuations itself.
 
 ## Milestone 0 — Lineage engine
 
@@ -105,24 +133,30 @@ src/fintrace/
 ├── graph.py           # Evidence / assumption lineage graph
 ├── register.py        # Provenance, revisions and JSON storage
 ├── excel.py           # Workbook structure + formula lineage ingestion
+├── compare.py         # Workbook-version comparison + impact tracing
 └── cli.py             # Small CLI for exercising the core
 
 tests/
 ├── test_graph.py
 ├── test_register.py
-└── test_excel.py
+├── test_excel.py
+└── test_compare.py
 
 docs/
 ├── architecture.md
+├── excel-ingestion.md
+├── model-version-intelligence.md
 └── roadmap.md
 
 examples/
-└── lineage_demo.py
+├── lineage_demo.py
+├── register_demo.py
+└── model_version_demo.py
 ```
 
 ## Status
 
-Early build. Core lineage, an auditable assumption register and the first Excel-ingestion layer are implemented. Model attribution, backtesting and the UI remain planned.
+The core MVP is functional: provenance/assumption lineage, Excel ingestion, deterministic workbook snapshots, model-version comparison and downstream impact tracing are implemented and covered by **24 automated tests**. Advanced attribution, backtesting and a visual UI remain future extensions rather than requirements for the core workflow.
 
 ## Why this project exists
 

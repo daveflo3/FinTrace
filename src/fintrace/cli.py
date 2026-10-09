@@ -6,6 +6,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
+from .compare import ModelComparator
 from .domain import Confidence, Node, NodeKind
 from .excel import ExcelIngestor
 from .graph import LineageGraph
@@ -121,6 +122,46 @@ def inspect_excel(
     if json_out is not None:
         snapshot.save_json(json_out)
         console.print(f"Snapshot written to {json_out}")
+
+
+@app.command("compare-excel")
+def compare_excel(
+    old_workbook: Path = typer.Argument(..., exists=True, readable=True, help="Older .xlsx/.xlsm model."),
+    new_workbook: Path = typer.Argument(..., exists=True, readable=True, help="Newer .xlsx/.xlsm model."),
+    json_out: Path | None = typer.Option(None, "--json-out", help="Optional JSON change-report output path."),
+) -> None:
+    """Compare two workbook versions and trace changed cells to downstream outputs."""
+    report = ModelComparator().compare_files(old_workbook, new_workbook)
+
+    console.print(f"[bold]{report.old_workbook}[/bold] → [bold]{report.new_workbook}[/bold]")
+    console.print(
+        f"{len(report.changes)} change(s) · {len(report.assumption_changes)} assumption candidate change(s) · "
+        f"{len(report.formula_changes)} formula change(s)"
+    )
+
+    table = Table(title="Model changes")
+    table.add_column("Cell")
+    table.add_column("Classification")
+    table.add_column("Before")
+    table.add_column("After")
+    table.add_column("Impacted outputs")
+    for change in report.changes[:30]:
+        before = change.before_value if change.before_value is not None else change.before_formula
+        after = change.after_value if change.after_value is not None else change.after_formula
+        table.add_row(
+            change.ref,
+            change.classification.value,
+            "" if before is None else str(before),
+            "" if after is None else str(after),
+            ", ".join(change.impacted_outputs),
+        )
+    console.print(table)
+
+    if report.warnings:
+        console.print(f"[yellow]{len(report.warnings)} parser warning(s) carried into comparison.[/yellow]")
+    if json_out is not None:
+        report.save_json(json_out)
+        console.print(f"Change report written to {json_out}")
 
 
 if __name__ == "__main__":

@@ -52,11 +52,12 @@ Pure Python objects representing evidence, assumptions, calculations, outputs an
 ### Lineage layer
 A directed graph for dependency and support relationships.
 
-### Adapter layer — next
-Importers for:
-- Excel workbooks
-- CSV / structured financial data
-- source documents and extracted snippets
+### Adapter layer — implemented / expanding
+Importers / adapters for:
+- Excel workbooks — implemented;
+- workbook-version comparison — implemented;
+- CSV / structured financial data — planned;
+- source documents and extracted snippets — planned.
 
 ### Analysis layer — later
 - assumption-quality checks

@@ -27,24 +27,25 @@ Deliverable: an assumption register that can answer "what are we assuming, why, 
 ## Phase 2 — Excel companion
 **Goal:** assist an existing Excel model.
 
-- read workbook with openpyxl
-- inspect named ranges / selected cells
-- map cells to FinTrace nodes
-- capture formulas and values
-- preserve workbook location
-- flag broken references / obvious reconciliation issues
-- export a review report
+- [x] read workbook with openpyxl
+- [x] inspect named ranges / selected cells
+- [x] map workbook structure and candidate roles
+- [x] capture formulas and values
+- [x] preserve workbook location
+- [x] warn on unsupported / unresolved references
+- [x] export a deterministic JSON model snapshot
 
 Deliverable: point FinTrace at a workbook and create a structured model map without replacing Excel.
 
 ## Phase 3 — Model version intelligence
 **Goal:** "Git for financial models."
 
-- compare model snapshots
-- identify changed assumptions
-- distinguish updated actuals from analyst changes
-- attribute output / valuation movement to changed drivers
-- generate a concise change report
+- [x] compare model snapshots
+- [x] identify changed assumption candidates
+- [x] distinguish candidate reported-actual changes from assumption changes using transparent heuristics
+- [x] trace changed cells to downstream output candidates
+- [ ] numerically attribute output / valuation movement to changed drivers
+- [x] generate a structured change report
 
 Example output:
 
