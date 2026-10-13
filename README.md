@@ -4,6 +4,17 @@
 
 **FinTrace is a financial decision-intelligence layer that assists analysts rather than replacing them.**
 
+### Launch the interactive Analysis Lab (preview)
+
+```powershell
+py -m pip install -e ".[dev,excel,dashboard]"
+py -m streamlit run src/fintrace/dashboard.py
+```
+
+The browser dashboard brings workbook comparisons, transparent DCF change attribution, stress tests, Monte Carlo scenario distributions, dated forecast backtesting, an append-only analyst journal and source-attributed narrative review into one local workspace. The UI preview includes readable financial charts, consistent narrative-input units and duplicate-entry protection for analyst notes.
+
+**[See the dashboard walkthrough and limitations](docs/analysis-lab.md).** Demo data is entirely fictional. This is a research prototype, not investment advice.
+
 The core idea is simple: a financial model should not just produce an answer. It should make the chain from **evidence → assumptions → calculations → outputs → judgement** inspectable.
 
 FinTrace is being built to sit beside an analyst's existing workflow (especially Excel), not to automate away the analyst.
@@ -20,7 +31,7 @@ python -m pip install -e ".[dev,excel]"
 python examples/portfolio_demo.py
 ```
 
-**[Open the walkthrough and both real Excel examples](docs/portfolio-demo.md).** The numbers are synthetic; the tool maps lineage, **not** numerical valuation attribution or investment recommendations.
+**[Open the walkthrough and both real Excel examples](docs/portfolio-demo.md).** The numbers are synthetic. Workbook lineage identifies possible downstream effects; it does not calculate an Excel valuation change or recommend trades. The separate DCF scenario lab provides numerical attribution for its own transparent model.
 
 ## What FinTrace is trying to solve
 
@@ -52,12 +63,14 @@ FinTrace aims to make those questions answerable.
 - [x] Excel model ingestion
 - [x] Model-version comparison
 - [x] Changed-cell → downstream-output impact tracing
-- [ ] Numerical valuation-change attribution
-- [ ] Thesis fragility analysis
-- [ ] Monte Carlo scenario analysis
-- [ ] Historical forecast backtesting
-- [ ] Analyst bias tracking and analyst memory
-- [ ] Narrative-vs-numbers review
+- [x] Numerical attribution across four specified parameters of the built-in DCF (not arbitrary Excel models)
+- [x] Scenario-based thesis fragility / stress concentration (not a probability score)
+- [x] Independent triangular Monte Carlo simulation (user-defined distributions)
+- [x] Historical forecast backtesting with explicit release dates (CSV input)
+- [x] Descriptive forecast-bias grouping + append-only local analyst journal
+- [x] Rule-based, source-attributed narrative-vs-numbers review (manual claims)
+- [ ] General-purpose numerical attribution for arbitrary Excel models
+- [ ] Calibrated probability models, automated source extraction, and multi-user deployment
 
 ## Milestones
 
@@ -66,9 +79,9 @@ FinTrace aims to make those questions answerable.
 | `v0.2.0` | Evidence + assumption lineage | ✅ Complete |
 | `v0.3.0` | Excel model ingestion | ✅ Complete |
 | `v0.4.0` | Model version intelligence MVP | ✅ Complete |
-| `v0.5.0` | Valuation-change attribution | Planned |
+| `v0.5.0` | Analysis Lab + interactive dashboard preview | Preview implementation |
 
-## Latest milestone — Model version intelligence
+## Earlier milestone — Model version intelligence
 
 The current build can:
 
@@ -125,7 +138,7 @@ FY27 revenue growth = 6.5% (analyst assumption)
 Revenue / FCF / DCF valuation (future workbook integration)
 ```
 
-The code now supports evidence/assumption lineage, Excel model inspection and lineage-aware model comparison. It **does not yet** numerically attribute valuation movement to individual changed drivers or calculate valuations itself.
+The code supports evidence/assumption lineage, Excel inspection, and lineage-aware workbook comparison. The **separate built-in DCF** calculates illustrative valuations and exactly allocates changes across four explicitly modelled drivers; it still **does not** numerically re-evaluate arbitrary Excel formulas or allocate their valuation changes.
 
 ## Milestone 0 — Lineage engine
 
@@ -148,6 +161,12 @@ src/fintrace/
 ├── register.py        # Provenance, revisions and JSON storage
 ├── excel.py           # Workbook structure + formula lineage ingestion
 ├── compare.py         # Workbook-version comparison + impact tracing
+├── valuation.py       # Parametric 5-year DCF and exact Shapley attribution
+├── risk.py            # One-at-a-time stress concentration and Monte Carlo
+├── backtest.py        # Dated historical forecast scoring and bias
+├── memory.py          # Append-only reasoning journal
+├── narrative.py       # Manual narrative/numeric consistency review
+├── dashboard.py       # Streamlit user interface
 └── cli.py             # Small CLI for exercising the core
 
 tests/
@@ -161,6 +180,7 @@ docs/
 ├── excel-ingestion.md
 ├── model-version-intelligence.md
 ├── portfolio-demo.md
+├── analysis-lab.md
 └── roadmap.md
 
 examples/
@@ -168,12 +188,13 @@ examples/
 ├── register_demo.py
 ├── model_version_demo.py
 ├── portfolio_demo.py
+├── sample_forecasts.csv
 └── sample_models/
 ```
 
 ## Status
 
-The core MVP is functional: provenance/assumption lineage, Excel ingestion, deterministic workbook snapshots, model-version comparison and downstream impact tracing are implemented and covered by **26 automated tests**. Advanced attribution, backtesting and a visual UI remain future extensions rather than requirements for the core workflow.
+The model-lineage MVP is functional. The experimental Analysis Lab adds a transparent fixed-structure DCF with exact four-driver attribution, analyst-controlled stress scenarios, reproducible simulations, release-date-aware backtesting, an append-only local memory log, manual narrative review and a Streamlit UI. The backend is covered by **40 automated tests**. The dashboard source is syntax-checked but still needs its first interactive smoke test on a machine with Streamlit installed. Numerical attribution for *arbitrary Excel formulas*, empirical distribution calibration, automatic filing extraction and a deployed multi-user product remain unimplemented.
 
 ## Why this project exists
 
