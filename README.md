@@ -8,6 +8,20 @@ The core idea is simple: a financial model should not just produce an answer. It
 
 FinTrace is being built to sit beside an analyst's existing workflow (especially Excel), not to automate away the analyst.
 
+
+## See FinTrace in action (2-minute demo)
+
+A fictional company's historical revenue is updated from **£850m to £865m**, while an analyst reduces forecast growth **8% → 6%** and EBITDA margin **20% → 19%**. FinTrace identifies the three changed inputs, distinguishes the *reported actual* from *assumption candidates*, and traces each through the workbook's formula dependencies.
+
+![Portfolio demo showing classified model changes](docs/assets/portfolio-demo.png)
+
+```bash
+python -m pip install -e ".[dev,excel]"
+python examples/portfolio_demo.py
+```
+
+**[Open the walkthrough and both real Excel examples](docs/portfolio-demo.md).** The numbers are synthetic; the tool maps lineage, **not** numerical valuation attribution or investment recommendations.
+
 ## What FinTrace is trying to solve
 
 Traditional models are good at calculations but weak at preserving reasoning:
@@ -146,17 +160,20 @@ docs/
 ├── architecture.md
 ├── excel-ingestion.md
 ├── model-version-intelligence.md
+├── portfolio-demo.md
 └── roadmap.md
 
 examples/
 ├── lineage_demo.py
 ├── register_demo.py
-└── model_version_demo.py
+├── model_version_demo.py
+├── portfolio_demo.py
+└── sample_models/
 ```
 
 ## Status
 
-The core MVP is functional: provenance/assumption lineage, Excel ingestion, deterministic workbook snapshots, model-version comparison and downstream impact tracing are implemented and covered by **24 automated tests**. Advanced attribution, backtesting and a visual UI remain future extensions rather than requirements for the core workflow.
+The core MVP is functional: provenance/assumption lineage, Excel ingestion, deterministic workbook snapshots, model-version comparison and downstream impact tracing are implemented and covered by **26 automated tests**. Advanced attribution, backtesting and a visual UI remain future extensions rather than requirements for the core workflow.
 
 ## Why this project exists
 
