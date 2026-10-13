@@ -15,6 +15,12 @@ The browser dashboard brings workbook comparisons, transparent DCF change attrib
 
 **[See the dashboard walkthrough and limitations](docs/analysis-lab.md).** Demo data is entirely fictional. This is a research prototype, not investment advice.
 
+### Dashboard preview — DCF change attribution
+
+![FinTrace interactive DCF attribution dashboard showing revised assumptions, changes in equity value and driver contributions](docs/assets/dcf-attribution-dashboard.png)
+
+*Illustrative five-year DCF using fictional figures. The contribution analysis is calculated within FinTrace's built-in DCF, not from an uploaded Excel workbook.*
+
 The core idea is simple: a financial model should not just produce an answer. It should make the chain from **evidence → assumptions → calculations → outputs → judgement** inspectable.
 
 FinTrace is being built to sit beside an analyst's existing workflow (especially Excel), not to automate away the analyst.
@@ -194,7 +200,7 @@ examples/
 
 ## Status
 
-The model-lineage MVP is functional. The experimental Analysis Lab adds a transparent fixed-structure DCF with exact four-driver attribution, analyst-controlled stress scenarios, reproducible simulations, release-date-aware backtesting, an append-only local memory log, manual narrative review and a Streamlit UI. The backend is covered by **40 automated tests**. The dashboard source is syntax-checked but still needs its first interactive smoke test on a machine with Streamlit installed. Numerical attribution for *arbitrary Excel formulas*, empirical distribution calibration, automatic filing extraction and a deployed multi-user product remain unimplemented.
+The model-lineage MVP is functional. The experimental Analysis Lab adds a transparent fixed-structure DCF with exact four-driver attribution, analyst-controlled stress scenarios, reproducible simulations, release-date-aware backtesting, an append-only local memory log, manual narrative review and a Streamlit UI. The project is covered by **47 automated tests**, and the dashboard has been manually tested in a local browser across all eight sections. Numerical attribution for *arbitrary Excel formulas*, empirical distribution calibration, automatic filing extraction and a deployed multi-user product remain unimplemented.
 
 ## Why this project exists
 
