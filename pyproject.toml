@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fintrace"
-version = "0.4.0"
+version = "0.5.0"
 description = "A financial decision-intelligence layer for traceable analyst judgement."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -23,6 +23,13 @@ excel = [
   "openpyxl>=3.1",
   "pandas>=2.2",
   "numpy>=2.0"
+]
+dashboard = [
+  "streamlit>=1.40,<2",
+  "altair>=5,<7",
+  "numpy>=2.0",
+  "pandas>=2.2",
+  "openpyxl>=3.1"
 ]
 dev = [
   "pytest>=8.2",
