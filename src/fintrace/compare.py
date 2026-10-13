@@ -234,17 +234,20 @@ class ModelComparator:
         old_candidates: dict[str, set[str]],
         new_candidates: dict[str, set[str]],
     ) -> tuple[ChangeClassification, tuple[str, ...]]:
-        if "assumption" in old_candidates.get(ref, set()) | new_candidates.get(ref, set()):
-            return (
-                ChangeClassification.ASSUMPTION,
-                ("cell is an assumption review candidate in at least one workbook version",),
-            )
-
+        # A reported historical input can score highly as an assumption candidate
+        # simply because formulas depend on it. Explicit historical context takes
+        # precedence over the generic numerical-input heuristic.
         context = f"{label or ''} {sheet}".lower()
         if any(keyword in context for keyword in self.ACTUAL_KEYWORDS):
             return (
                 ChangeClassification.REPORTED_ACTUAL,
                 ("label/sheet contains historical or reported-actual language",),
+            )
+
+        if "assumption" in old_candidates.get(ref, set()) | new_candidates.get(ref, set()):
+            return (
+                ChangeClassification.ASSUMPTION,
+                ("cell is an assumption review candidate in at least one workbook version",),
             )
 
         return (
